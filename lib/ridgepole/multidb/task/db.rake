@@ -53,6 +53,7 @@ namespace :db do
     end
 
     def highlight_sql(text)
+      require "colorize"
       text
         .gsub(/CREATE\s+.+(?=\()/, "\\0".colorize(:light_green))
         .gsub(/ALTER\s+TABLE\s+.+\s+ADD.+/, "\\0".colorize(:light_green))
