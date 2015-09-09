@@ -3,24 +3,29 @@ namespace :db do
     #FIXME
     SCHEMA_FILE = "db/schema/schema.rb"
 
+    desc "Show diff between schema file and table configuration"
     task :diff => :environment do
       configs.each do |connection_name, config|
         ridgepole_diff(SCHEMA_FILE, connection_name, config)
       end
     end
 
+    desc "Apply schema files to databases"
     task :apply => :environment do
       execute_ridgepole(configs, "--apply")
     end
 
+    desc "Dry run apply schema"
     task :apply_dry_run => :environment do
       execute_ridgepole(configs, "--apply", dry_run: true)
     end
 
+    desc "Merge schema file and table configutation"
     task :merge => :environment do
       execute_ridgepole(configs, "--merge")
     end
 
+    desc "Dry run merge"
     task :merge_dry_run => :environment do
       execute_ridgepole(configs, "--merge", dry_run: true)
     end
