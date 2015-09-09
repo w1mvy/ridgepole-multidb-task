@@ -68,10 +68,7 @@ namespace :db do
     end
 
     def configs
-      return @configs if @configs
-      @configs = ActiveRecord::Base.configurations.dup
-      @configs.delete(Rails.env)
-      @configs
+      @configs ||= ActiveRecord::Base.configurations.dup
     end
   end
 end
