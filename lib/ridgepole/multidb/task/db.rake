@@ -6,7 +6,7 @@ namespace :db do
     desc "Show diff between schema file and table configuration"
     task :diff => :environment do
       configs.each do |connection_name, config|
-        ridgepole_diff(SCHEMA_FILE, connection_name, config)
+        ridgepole_diff(get_schema_rb, connection_name, config)
       end
     end
 
@@ -30,22 +30,27 @@ namespace :db do
       execute_ridgepole(configs, "--merge", dry_run: true)
     end
 
+    def get_schema_rb
+      spec = Gem::Specification.find_by_name "ridgepole-multidb-task"
+      "#{spec.gem_dir}/lib/ridgepole/multidb/schema.rb"
+    end
+
     def execute_ridgepole(configs, mode, dry_run: false)
       configs.each do |connection_name, config|
-        ridgepole_apply(SCHEMA_FILE, connection_name, config, mode, dry_run: dry_run)
+        ridgepole_apply(get_schema_rb, connection_name, config, mode, dry_run: dry_run)
       end
     end
 
     def ridgepole_diff(schema_file, connection_name, config)
       puts format_label("CONNECTION [#{ connection_name } (#{ config['host'] })] BEGIN")
-      output = `RAILS_ENV=#{ Rails.env } CONNECTION=#{ connection_name } bundle exec ridgepole --enable-mysql-awesome --diff '#{ config.to_json }' #{ schema_file }`
+      output = `RAILS_ROOT=#{ Rails.root } RAILS_ENV=#{ Rails.env } CONNECTION=#{ connection_name } bundle exec ridgepole --enable-mysql-awesome --diff '#{ config.to_json }' #{ schema_file }`
       puts highlight_sql(output)
       puts format_label("CONNECTION [#{ connection_name } (#{ config['host'] })] END")
     end
 
     def ridgepole_apply(schema_file, connection_name, config, mode, dry_run: false)
       puts format_label("CONNECTION [#{ connection_name } (#{ config['host'] })] BEGIN")
-      command  = "RAILS_ENV=#{ Rails.env } CONNECTION=#{ connection_name } bundle exec ridgepole --enable-mysql-awesome #{ mode } -c '#{ config.to_json }' -f #{ schema_file }"
+      command  = "RAILS_ROOT=#{ Rails.root } RAILS_ENV=#{ Rails.env } CONNECTION=#{ connection_name } bundle exec ridgepole --enable-mysql-awesome #{ mode } -c '#{ config.to_json }' -f #{ schema_file }"
       command += " --dry-run" if dry_run
       output = `#{ command }`
       puts highlight_sql(output)
