@@ -1,8 +1,5 @@
 namespace :db do
   namespace :schema do
-    #FIXME
-    SCHEMA_FILE = "db/schema/schema.rb"
-
     desc "Show diff between schema file and table configuration"
     task :diff => :environment do
       configs.each do |connection_name, config|
