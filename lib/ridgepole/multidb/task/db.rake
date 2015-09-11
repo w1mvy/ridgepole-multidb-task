@@ -39,6 +39,7 @@ namespace :db do
     def ridgepole_diff(schema_file, connection_name, config)
       puts format_label("CONNECTION [#{ connection_name } (#{ config['host'] })] BEGIN")
       output = `RAILS_ENV=#{ Rails.env } CONNECTION=#{ connection_name } bundle exec ridgepole --enable-mysql-awesome --diff '#{ config.to_json }' #{ schema_file }`
+      fail_if_last_command_failed
       puts highlight_sql(output)
       puts format_label("CONNECTION [#{ connection_name } (#{ config['host'] })] END")
     end
@@ -48,8 +49,13 @@ namespace :db do
       command  = "RAILS_ENV=#{ Rails.env } CONNECTION=#{ connection_name } bundle exec ridgepole --enable-mysql-awesome #{ mode } -c '#{ config.to_json }' -f #{ schema_file }"
       command += " --dry-run" if dry_run
       output = `#{ command }`
+      fail_if_last_command_failed
       puts highlight_sql(output)
       puts format_label("CONNECTION [#{ connection_name } (#{ config['host'] })] END")
+    end
+
+    def fail_if_last_command_failed
+      fail unless $? == 0
     end
 
     def highlight_sql(text)
