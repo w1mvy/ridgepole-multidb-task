@@ -1,4 +1,4 @@
-namespace :db do
+namespace :ridgepole do
   namespace :schema do
     desc "Show diff between schema file and table configuration"
     task :diff => :environment do

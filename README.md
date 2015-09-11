@@ -42,11 +42,11 @@ If your ar configuration is multi db, define schema files followers.
 define task followers
 
 ```
-rake db:schema:apply                    # Apply schema files to databases
-rake db:schema:apply_dry_run            # Dry run apply schema
-rake db:schema:diff                     # Show diff between schema file and table configuration
-rake db:schema:merge                    # Merge schema file and table configutation
-rake db:schema:merge_dry_run            # Dry run merge
+rake ridgepole:schema:apply                    # Apply schema files to databases
+rake ridgepole:schema:apply_dry_run            # Dry run apply schema
+rake ridgepole:schema:diff                     # Show diff between schema file and table configuration
+rake ridgepole:schema:merge                    # Merge schema file and table configutation
+rake ridgepole:schema:merge_dry_run            # Dry run merge
 ```
 
 
